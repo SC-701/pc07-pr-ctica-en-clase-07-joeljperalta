@@ -3,32 +3,39 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Reglas;
 
-namespace Producto.WEB.Pages.Producto
+public class AgregarModel : PageModel
 {
-    public class AgregarModel : PageModel
+    private readonly ProductoReglas _productoReglas;
+
+    public AgregarModel(ProductoReglas productoReglas)
     {
-        private readonly ProductoReglas _productoReglas;
+        _productoReglas = productoReglas;
+    }
 
-        public AgregarModel(ProductoReglas productoReglas)
+    [BindProperty]
+    public ProductoRequest producto { get; set; }
+
+    public void OnGet()
+    {
+
+    }
+
+    public async Task<IActionResult> OnPost()
+    {
+        if (!ModelState.IsValid)
+            return Page();
+
+
+        if (!Guid.TryParse(producto.SubCategoria, out Guid idSubcategoria))
         {
-            _productoReglas = productoReglas;
+            ModelState.AddModelError("producto.SubCategoria", "Subcategoría inválida");
+            return Page();
         }
 
-        [BindProperty]
-        public ProductoRequest producto { get; set; }
+        producto.IdSubcategoria = idSubcategoria;
 
-        public void OnGet()
-        {
-        }
+        await _productoReglas.Agregar(producto);
 
-        public async Task<IActionResult> OnPost()
-        {
-            if (!ModelState.IsValid)
-                return Page();
-
-            await _productoReglas.Agregar(producto);
-
-            return RedirectToPage("./Index");
-        }
+        return RedirectToPage("./Index");
     }
 }

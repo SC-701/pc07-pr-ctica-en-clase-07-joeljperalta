@@ -23,15 +23,24 @@ namespace Abstracciones.Modelos
 
     public class ProductoRequest : ProductoBase
     {
-                public Guid Id { get; set; }
+        public Guid Id { get; set; }
+
+
+        public Guid IdCategoria { get; set; }
+
+
         public Guid IdSubcategoria { get; set; }
-        public string SubCategoria { get; set; }
-        public string Categoria { get; set; }
+
+
+        public string? SubCategoria { get; set; }
+        public string? Categoria { get; set; }
     }
 
     public class ProductoResponse : ProductoBase
     {
         public Guid Id { get; set; }
+        public Guid IdCategoria { get; set; }
+        public Guid IdSubcategoria { get; set; }
         public string SubCategoria { get; set; }
         public string Categoria { get; set; }
         public decimal PrecioUSD { get; set; }

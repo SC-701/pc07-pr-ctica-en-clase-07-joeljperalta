@@ -15,25 +15,25 @@ namespace Producto.WEB.Pages.Producto
         }
 
         [BindProperty]
-        public ProductoRequest producto { get; set; } = default!;
-
-        [BindProperty]
-        public Guid Id { get; set; } 
+        public ProductoRequest producto { get; set; } = new();
 
         public async Task<IActionResult> OnGet(Guid id)
         {
             var prod = await _productoReglas.Obtener(id);
             if (prod == null) return NotFound();
 
-            Id = prod.Id; 
             producto = new ProductoRequest
             {
+                Id = prod.Id,
                 Nombre = prod.Nombre,
                 Descripcion = prod.Descripcion,
                 Precio = prod.Precio,
                 Stock = prod.Stock,
                 CodigoBarras = prod.CodigoBarras,
-          
+
+                IdSubcategoria = prod.IdSubcategoria,
+                SubCategoria = prod.IdSubcategoria.ToString(), 
+                Categoria = prod.Categoria
             };
 
             return Page();
@@ -41,10 +41,19 @@ namespace Producto.WEB.Pages.Producto
 
         public async Task<IActionResult> OnPost()
         {
-            if (!ModelState.IsValid) return Page();
+            if (!ModelState.IsValid)
+                return Page();
 
-       
-            await _productoReglas.Editar(Id, producto);
+ 
+            if (!Guid.TryParse(producto.SubCategoria, out Guid idSubcategoria))
+            {
+                ModelState.AddModelError("producto.SubCategoria", "Subcategoría inválida");
+                return Page();
+            }
+
+            producto.IdSubcategoria = idSubcategoria;
+
+            await _productoReglas.Editar(producto.Id, producto);
 
             return RedirectToPage("./Index");
         }

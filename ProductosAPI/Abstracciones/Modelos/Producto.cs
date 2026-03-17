@@ -50,6 +50,7 @@ namespace Abstracciones.Modelos
     {
         public Guid Id { get; set; }
         public string SubCategoria { get; set; }
+
         public string Categoria { get; set; }
 
         public decimal PrecioUSD { get; set; }
